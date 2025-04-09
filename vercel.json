@@ -1,28 +1,13 @@
 {
-  "builds": [
-      {
-          "src": "blood_bank/wsgi.py",
-          "use": "@vercel/python",
-          "config": {
-              "maxLambdaSize": "15mb",
-              "runtime": "python3.11",
-              "includeFiles": [
-                  "**/*.py",
-                  "staticfiles/**",
-                  "blood/static/**",
-                  "user/static/**"
-              ]
-          }
-      }
-  ],
+  "builds": [{
+    "src": "blood_bank/wsgi.py",
+    "use": "@vercel/python",
+    "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.3" }
+  }],
   "routes": [
-      {
-          "src": "/static/(.*)",
-          "dest": "/staticfiles/$1"
-      },
-      {
-          "src": "/(.*)",
-          "dest": "blood_bank/wsgi.py"
-      }
+    {
+      "src": "/(.*)",
+      "dest": "blood_bank/wsgi.py"
+    }
   ]
 }
