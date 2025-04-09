@@ -1,0 +1,36 @@
+### Python ###
+blood_bank_env/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+.coverage
+.pytest_cache/
+.mypy_cache/
+
+### Django ###
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+### Environment ###
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.venv
+.env.*
+secrets.yml
