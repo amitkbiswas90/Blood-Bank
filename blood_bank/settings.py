@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'drf_yasg',
+    "corsheaders",
     'django_filters',
     'rest_framework',
     'blood',
@@ -36,6 +37,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -88,6 +90,11 @@ DATABASES = {
     }
 }
 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173/",
+    "http://localhost:5174/",
+]
 
 
 # Password validation
