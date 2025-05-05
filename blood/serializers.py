@@ -33,6 +33,7 @@ class DonorSerializer(serializers.ModelSerializer):
             'name',
             'blood_group',
             'age',
+            'phone',
             'last_donation',
             'eligibility_status'
         ]
