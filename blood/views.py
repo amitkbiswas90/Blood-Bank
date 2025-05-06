@@ -10,8 +10,10 @@ from rest_framework.generics import ListAPIView
 from django_filters import rest_framework as filters
 from user.models import User
 from rest_framework.views import APIView
-from pagination import DefaultPagination
+from rest_framework.pagination import  PageNumberPagination
 
+class DefaultPagination(PageNumberPagination):
+    page_size = 10
 
 class BloodRequestViewSet(viewsets.ModelViewSet):
     """
