@@ -10,6 +10,7 @@ from rest_framework.generics import ListAPIView
 from django_filters import rest_framework as filters
 from user.models import User
 from rest_framework.views import APIView
+from pagination import DefaultPagination
 
 
 class BloodRequestViewSet(viewsets.ModelViewSet):
@@ -21,6 +22,7 @@ class BloodRequestViewSet(viewsets.ModelViewSet):
     """
     serializer_class = BloodRequestSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = DefaultPagination
 
     def get_queryset(self):
         user = self.request.user
@@ -133,6 +135,7 @@ class DonorListView(ListAPIView):
     permission_classes = [permissions.AllowAny]
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = DonorFilter
+    pagination_class = DefaultPagination
 
     def get_queryset(self):
         return User.objects.filter(
