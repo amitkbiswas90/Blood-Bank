@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.pagination import  PageNumberPagination
 
 class DefaultPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 9
 
 class BloodRequestViewSet(viewsets.ModelViewSet):
     """
