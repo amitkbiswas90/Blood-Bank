@@ -11,6 +11,8 @@ from django_filters import rest_framework as filters
 from user.models import User
 from rest_framework.views import APIView
 from rest_framework.pagination import  PageNumberPagination
+from urllib.parse import unquote_plus
+
 
 class DefaultPagination(PageNumberPagination):
     page_size = 9
@@ -138,12 +140,19 @@ class DonorListView(ListAPIView):
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = DonorFilter
     pagination_class = DefaultPagination
-
     def get_queryset(self):
-        return User.objects.filter(
+        queryset = User.objects.filter(
             is_available=True,
             blood_group__isnull=False
-        ).exclude(blood_group='').order_by('blood_group', '-last_donation_date')
+        ).exclude(blood_group='')
+
+        # Manually decode the blood_group param
+        blood_group_raw = self.request.GET.get('blood_group')
+        if blood_group_raw:
+            blood_group = unquote_plus(blood_group_raw)
+            queryset = queryset.filter(blood_group=blood_group)
+
+        return queryset.order_by('blood_group', '-last_donation_date')
     
 
 class Dashboard(APIView):
