@@ -5,16 +5,24 @@ from user.CustomUserManager import CustomUserManager
 
 
 class User(AbstractUser):
+    A_POSITIVE = 'A+'
+    A_NEGATIVE = 'A-'
+    B_POSITIVE = 'B+'
+    B_NEGATIVE = 'B-'
+    AB_POSITIVE = 'AB+'
+    AB_NEGATIVE = 'AB-'
+    O_POSITIVE = 'O+'
+    O_NEGATIVE = 'O-'
 
     BLOOD_GROUP_CHOICES = [
-        ('A_plus', 'A+'),
-        ('A_minus', 'A-'),
-        ('B_plus', 'B+'),
-        ('B_minus', 'B-'),
-        ('AB_plus', 'AB+'),
-        ('AB_minus', 'AB-'),
-        ('O_plus', 'O+'),
-        ('O_minus', 'O-'),
+        (A_POSITIVE, 'A+'),
+        (A_NEGATIVE, 'A-'),
+        (B_POSITIVE, 'B+'),
+        (B_NEGATIVE, 'B-'),
+        (AB_POSITIVE, 'AB+'),
+        (AB_NEGATIVE, 'AB-'),
+        (O_POSITIVE, 'O+'),
+        (O_NEGATIVE, 'O-'),
     ]
 
     username = None
@@ -25,10 +33,7 @@ class User(AbstractUser):
         blank=True,
         validators=[MinValueValidator(18), MaxValueValidator(100)]
     )
-    blood_group = models.CharField(
-        max_length=8, 
-        choices=BLOOD_GROUP_CHOICES
-    )
+    blood_group = models.CharField(max_length=8, choices=BLOOD_GROUP_CHOICES)
     phone = models.CharField(
         max_length=15,
         validators=[RegexValidator(r'^\+?1?\d{9,15}$')],

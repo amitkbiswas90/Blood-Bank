@@ -3,6 +3,7 @@ from user.models import User
 
 # Create your models here.
 class BloodRequest(models.Model):
+    
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
@@ -22,10 +23,7 @@ class BloodRequest(models.Model):
         blank=True,
         related_name='requests_accepted'
     )
-    blood_group = models.CharField(
-        max_length=8,  # Changed from 3 to 8
-        choices=User.BLOOD_GROUP_CHOICES
-    )
+    blood_group = models.CharField(max_length=8, choices=User.BLOOD_GROUP_CHOICES)
     units_required = models.PositiveIntegerField(default=1)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     hospital_name = models.CharField(max_length=200)

@@ -18,7 +18,7 @@ urlpatterns = [
     path('', include(users_router.urls)),
     
     # Regular APIView endpoint
-    path('donors-list/', DonorListView.as_view(), name='donor-list'),
+    path('donors-list/', DonorListView.as_view(), name='donors-list'),
     path('dashboard/', Dashboard.as_view(), name='dashboard'),
     
     # Authentication
