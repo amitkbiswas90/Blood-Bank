@@ -5,13 +5,15 @@ from .models import BloodRequest
 from blood.serializers import  BloodRequestSerializer,DonorSerializer,DonationHistorySerializer
 from django.utils import timezone
 from datetime import timedelta
+from drf_yasg import openapi 
 from django.db.models import Q
 from rest_framework.generics import ListAPIView
 from django_filters import rest_framework as filters
 from user.models import User
 from rest_framework.views import APIView
 from rest_framework.pagination import  PageNumberPagination
-from urllib.parse import unquote_plus
+from drf_yasg.utils import swagger_auto_schema
+
 
 
 class DefaultPagination(PageNumberPagination):
@@ -118,6 +120,7 @@ class BloodRequestViewSet(viewsets.ModelViewSet):
 
 class DonorFilter(filters.FilterSet):
     blood_group = filters.ChoiceFilter(
+        field_name='blood_group',
         choices=User.BLOOD_GROUP_CHOICES,
         label='Blood Group'
     )
@@ -127,32 +130,60 @@ class DonorFilter(filters.FilterSet):
         fields = ['blood_group']
 
 class DonorListView(ListAPIView):
-
-    """
-    List available donors
-    
-    Public endpoint - no authentication required
-    Filterable by blood_group using query parameters
-    """
-   
     serializer_class = DonorSerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = DonorFilter
     pagination_class = DefaultPagination
+    queryset = User.objects.filter(
+        is_available=True,
+        blood_group__isnull=False
+    ).exclude(blood_group='').order_by('blood_group', '-last_donation_date')
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'blood_group',
+                openapi.IN_QUERY,
+                description="Filter by blood group",
+                type=openapi.TYPE_STRING,
+                enum=[choice[0] for choice in User.BLOOD_GROUP_CHOICES]
+            ),
+            openapi.Parameter(
+                'search',
+                openapi.IN_QUERY,
+                description="Search by name or address",
+                type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'page',
+                openapi.IN_QUERY,
+                description="Page number",
+                type=openapi.TYPE_INTEGER
+            )
+        ]
+    )
     def get_queryset(self):
-        queryset = User.objects.filter(
-            is_available=True,
-            blood_group__isnull=False
-        ).exclude(blood_group='')
+        queryset = super().get_queryset()
+        search_query = self.request.query_params.get('search')
+        
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) |
+                Q(address__icontains=search_query)
+            )
+        return queryset
 
-        # Manually decode the blood_group param
-        blood_group_raw = self.request.GET.get('blood_group')
-        if blood_group_raw:
-            blood_group = unquote_plus(blood_group_raw)
-            queryset = queryset.filter(blood_group=blood_group)
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-        return queryset.order_by('blood_group', '-last_donation_date')
+
     
 
 class Dashboard(APIView):
