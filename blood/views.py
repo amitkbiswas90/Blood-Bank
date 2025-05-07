@@ -116,6 +116,7 @@ class BloodRequestViewSet(viewsets.ModelViewSet):
 
 class DonorFilter(filters.FilterSet):
     blood_group = filters.ChoiceFilter(
+        field_name='blood_group',
         choices=User.BLOOD_GROUP_CHOICES,
         label='Blood Group'
     )
@@ -125,25 +126,28 @@ class DonorFilter(filters.FilterSet):
         fields = ['blood_group']
 
 class DonorListView(ListAPIView):
-
-    """
-    List available donors
-    
-    Public endpoint - no authentication required
-    Filterable by blood_group using query parameters
-    """
-   
     serializer_class = DonorSerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = DonorFilter
     pagination_class = DefaultPagination
+    queryset = User.objects.filter(
+        is_available=True,
+        blood_group__isnull=False
+    ).exclude(blood_group='').order_by('blood_group', '-last_donation_date')
 
     def get_queryset(self):
-        return User.objects.filter(
-            is_available=True,
-            blood_group__isnull=False
-        ).exclude(blood_group='').order_by('blood_group', '-last_donation_date')
+        # Add search functionality if needed
+        queryset = super().get_queryset()
+        search_query = self.request.query_params.get('search', None)
+        
+        if search_query:
+            # Add additional search fields here if needed
+            queryset = queryset.filter(
+                Q(full_name__icontains=search_query) |
+                Q(location__icontains=search_query)
+            )
+        return queryset
     
 
 class Dashboard(APIView):
