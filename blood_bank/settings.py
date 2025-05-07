@@ -156,6 +156,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'blood_bank.pagination.DefaultPagination',
+    'PAGE_SIZE': 9
 }
 
 DJOSER = {

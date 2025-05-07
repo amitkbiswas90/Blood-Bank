@@ -10,10 +10,7 @@ from rest_framework.generics import ListAPIView
 from django_filters import rest_framework as filters
 from user.models import User
 from rest_framework.views import APIView
-from rest_framework.pagination import  PageNumberPagination
-
-class DefaultPagination(PageNumberPagination):
-    page_size = 9
+from blood_bank.pagination import DefaultPagination
 
 class BloodRequestViewSet(viewsets.ModelViewSet):
     """
@@ -137,12 +134,10 @@ class DonorListView(ListAPIView):
     ).exclude(blood_group='').order_by('blood_group', '-last_donation_date')
 
     def get_queryset(self):
-        # Add search functionality if needed
         queryset = super().get_queryset()
-        search_query = self.request.query_params.get('search', None)
+        search_query = self.request.query_params.get('search')
         
         if search_query:
-            # Add additional search fields here if needed
             queryset = queryset.filter(
                 Q(full_name__icontains=search_query) |
                 Q(location__icontains=search_query)
